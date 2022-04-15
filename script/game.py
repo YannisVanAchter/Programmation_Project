@@ -14,10 +14,16 @@ import os.path as pt
 import ast
 
 # self modules
-import data_manager as dm
-import remote_player as rp
-import UI as ui
-import IA as ia
+try:
+    import data_manager as dm
+    import remote_player as rp
+    import UI as ui
+    import IA as ia
+except ModuleNotFoundError:
+    import script.data_manager as dm
+    import script.remote_player as rp
+    import script.UI as ui
+    import script.IA as ia
 
 # -- Anomimous fonctions of game--
 get_distance = lambda wolve1, wolve2  : max(abs(wolve2[0] - wolve1[0] ) , abs(wolve2[1] - wolve1[1]))

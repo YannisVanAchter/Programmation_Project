@@ -11,7 +11,10 @@ __version__ = "1.2"
 import ast
 
 # self modules
-import engine_gr_3 as eng
+try:
+    import engine_gr_3 as eng
+except ModuleNotFoundError:
+    import script.engine_gr_3 as eng
 
 # -- IA funcitons --
 def get_IA_order(db : dict , player : int, order_1 : list[str] = []) -> (str):
