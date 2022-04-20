@@ -810,9 +810,15 @@ def play_game(map_path : str, group_1 : str, type_1 : str, group_2 : str, type_2
     
     # create connection between 2 computer if nessesary
     if type_1 == 'remote':
-        connection_1 = create_connection(group_2, group_1)
+        try:
+            connection_1 = create_connection(group_2, group_1)
+        except (IOError, TypeError, NameError, ValueError, EOFError) as error:
+            exit(error)
     if type_2 == 'remote':
-        connection_2 = create_connection(group_1, group_2)
+        try:
+            connection_2 = create_connection(group_1, group_2)
+        except (IOError, TypeError, NameError, ValueError, EOFError) as error:
+            exit(error)
         
     db = data_create(map_path , group_1 , group_2)
     
@@ -1214,9 +1220,6 @@ def launch_game() -> (None):
         if type_1 in type_player and type_2 in type_player:
             try:
                 winner = play_game(map_path, group_1, type_1, group_2, type_2)
-            except (IOError, TypeError, NameError, ValueError, EOFError) as error:
-                print(error)
-                continue
             except KeyboardInterrupt as error:
                 print(error)
                 print('game restart...', end='')
@@ -1226,6 +1229,9 @@ def launch_game() -> (None):
                 clear()
                 launch_game()
                 break
+            except SystemExit as e:
+                print(e)
+                continue
             except:
                 continue
             
