@@ -106,7 +106,7 @@ def track_alpha(db , wolve_coord , player):
     alpha_coord = [wolf for wolf in enemy_wolves if str(db['wolves'][wolf]['type']).lower() == 'alpha'][0] # get coord of alpha
     
     if  wolve_data['energy'] > 5:
-        alpha_path = get_trajectory(alpha_coord,  wolve_coord)
+        alpha_path = get_trajectory(alpha_coord,  wolve_coord, db)
         if eng.can_attack(alpha_coord , wolve_coord, db):
             return f":*{alpha_coord[0]}-{alpha_coord[1]} "
         elif alpha_path in db and eng.can_attack(alpha_path, wolve_coord, db) \
@@ -139,7 +139,7 @@ def track_alpha(db , wolve_coord , player):
         else:
             # get coord of our alpha
             alpha_own = [_ for _ in db['wolves'] if str(db['wolves'][_]['type']).lower() == 'alpha' and db['wolves'][_]['property'] == player][0]
-            alpha_shield = get_trajectory(alpha_own, wolve_coord)
+            alpha_shield = get_trajectory(alpha_own, wolve_coord, db)
             if eng.get_distance(wolve_coord, alpha_shield) > 1:
                 return f":@{alpha_shield[0]}-{alpha_shield[1]} "
 
@@ -196,13 +196,14 @@ def find_nearrest_food(wolve : tuple[int, int], db : dict , min_energy : int = 1
     return food_list
 
 
-def get_trajectory(target_coord : tuple[int,int], wolve_coord : tuple[int,int]) -> (tuple[int,int]):
+def get_trajectory(target_coord : tuple[int,int], wolve_coord : tuple[int,int], db: dict, tested: list = []) -> (tuple[int,int]):
     """return the trajectory from wolve to a target
 
     Parameters:
     -----------
         wolve_coord : wolve coord (tuple[int,int])
         target_coord : target entity coord (tuple[int,int])
+        db : data base of game (dict)
 
     Returns:
     --------
@@ -213,21 +214,54 @@ def get_trajectory(target_coord : tuple[int,int], wolve_coord : tuple[int,int]) 
         specification : Yannis Van Achter (v1. 19/03/2022)
         implementation : Yannis Van Achter (v1. 19/03/2022)
     """
-    if eng.can_eat(target_coord , wolve_coord):
-        return target_coord
-    destination = list(wolve_coord).copy()
-    delta_x = target_coord[1] - destination[1]
-    delta_y = target_coord[0] - destination[0]
-    if delta_x < 0:
-        destination[1] -= 1
-    elif delta_x > 0:
-        destination[1] += 1
-    if delta_y < 0:
-        destination[0] -= 1
-    elif delta_y > 0:
-        destination[0] += 1
+    def basic_direction(target_coord: tuple[int,int], wolve_coord: tuple[int,int])-> (tuple[int,int]):
+        if eng.can_eat(target_coord , wolve_coord):
+            return target_coord
+        destination = list(wolve_coord).copy()
+        delta_x = target_coord[1] - destination[1]
+        delta_y = target_coord[0] - destination[0]
+        if delta_x < 0:
+            destination[1] -= 1
+        elif delta_x > 0:
+            destination[1] += 1
+        if delta_y < 0:
+            destination[0] -= 1
+        elif delta_y > 0:
+            destination[0] += 1
+        
+        return tuple(destination)
     
-    return tuple(destination)
+    def complex_direction(target_coord: tuple[int,int], wolve_coord: tuple[int,int], db: dict, tested: list[tuple]) -> (tuple[bool,tuple[int,int]]):
+        tested.append(wolve_coord)
+        if eng.can_eat(target_coord, wolve_coord):
+            return True, tested
+        for y in range(wolve_coord[0]-1, wolve_coord[0]+2):
+            for x in range(wolve_coord[1]-1,wolve_coord[1]+2):
+                if (y,x) not in tested:
+                    tested.append((y,x))
+                    if eng.can_move((y,x), wolve_coord, db):
+                        direction = get_trajectory(target_coord, (y,x), db, tested)
+                        if direction == target_coord:
+                            return True , tested
+                    else:
+                        return complex_direction(target_coord, wolve_coord, db, tested)
+        return False, tested
+    
+    
+    direction = basic_direction(target_coord, wolve_coord)
+    if not eng.can_move(direction, wolve_coord, db):
+        tested += [direction, wolve_coord]
+        posibility = {}
+        for y in range(wolve_coord[0]-1, wolve_coord[0]+2):
+            for x in range(wolve_coord[1]-1,wolve_coord[1]+2):
+                if (y,x) not in tested:
+                    tested.append((y,x))
+                    if complex_direction(target_coord, (y,x), db, tested)[0]:
+                        dist = eng.get_distance((y,x), target_coord)
+                        posibility[dist] = (y,x)
+        if len(posibility) != 0:
+            direction = posibility[min(list(posibility.keys()))] # get coord to go by the minimum distance from wolve to target
+    return direction
 
 def get_entity_around(wolve_coord : tuple[int,int] , db : dict) -> (tuple[int, int]):
     """return the first entity around a wolve in the db
