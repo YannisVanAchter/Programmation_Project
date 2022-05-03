@@ -1,5 +1,4 @@
-./script/__pycache__
-.\script\__pycache__
+__pycache__
 *.cpython-39.pyc
 .idea/
 *.rar
