@@ -3,12 +3,15 @@ Remote module for Python 3.9.For INFOB132 course at UNamur
 
 In this course the learner have to create a game with which they can play remotely from the pool at faculty
 """
-__author__  ="Benoit Frenay <benoit.frenay@unamur.be> <https://directory.unamur.be/staff/bfrenay>"
-__date__    = "Unknow"
-__version__ = "Unknow"
+__author__  = ["Benoit Frenay <benoit.frenay@unamur.be> <https://directory.unamur.be/staff/bfrenay>",
+               "Yannis Van Achter <yannis.van.achter@gmail.com>",
+]
+__date__    = "28 april 2022"
+__version__ = "1.2.0"
 
 import socket
 import time
+import re
 
 
 def create_server_socket(local_port, verbose):
@@ -109,14 +112,43 @@ def wait_for_connection(socket_in, verbose):
     return socket_in            
 
 
-def create_connection(your_group, other_group=0, other_IP='127.0.0.1', verbose=False):
+def set_IP(other_group):
+    """Ask for the IP of the other computer
+    
+    Show your IP and ask for the IP of the remote
+    
+    Parameters:
+    -----------
+        other_group (int): n° of the group to remote
+        
+    Returns:
+    --------
+        other_IP (str): IP of the other computer 
+        
+    """
+    my_IP = socket.gethostbyname_ex(socket.gethostname())[-1][0]
+    print(f"Your IP is : {my_IP}")
+    other_IP = ''
+    while other_IP == '':
+        try:
+            other_IP = input('Enter the IP of the group {other_group} if this is not the arbitrator of the tournaments : ')
+            if other_IP == '':
+                other_IP = '127.0.0.1'
+            elif not re.search(r"[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}", other_IP):
+                other_IP = ''
+        except (EOFError) as e:
+            exit(f"EOFError : The input for ask the IP of the other group has faill please try again. \n \nRestart the program")
+    
+    return other_IP
+
+
+def create_connection(your_group, other_group=0, verbose=True):
     """Creates a connection with a referee or another group.
     
     Parameters
     ----------
     your_group: id of your group (int)
     other_group: id of the other group, if there is no referee (int, optional)
-    other_IP: IP address where the referee or the other group is (str, optional)
     verbose: True only if connection progress must be displayed (bool, optional)
     
     Return
@@ -139,7 +171,8 @@ def create_connection(your_group, other_group=0, other_IP='127.0.0.1', verbose=F
     The returned connection can be used directly with other functions in this module.
             
     """
-    
+    other_IP = set_IP(other_group)
+
     # init verbose display
     if verbose:
         print('\n[--- starts connection -----------------------------------------------------\n')
@@ -178,7 +211,7 @@ def create_connection(your_group, other_group=0, other_IP='127.0.0.1', verbose=F
     return connection
         
         
-def bind_referee(group_1, group_2, verbose=False):
+def bind_referee(group_1, group_2, verbose=True):
     """Put a referee between two groups.
     
     Parameters
@@ -203,6 +236,8 @@ def bind_referee(group_1, group_2, verbose=False):
     with other functions in this module.  connection of first (second) player has key 1 (2).
             
     """
+    my_IP = socket.gethostbyname_ex(socket.gethostname())[-1][0]
+    print(f"Your IP is : {my_IP}")
     
     # init verbose display
     if verbose:
