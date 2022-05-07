@@ -1,7 +1,8 @@
 __pycache__
-*.cpython-39.pyc
+venv 
+.cpython-39.pyc
 .idea/
-*.rar
-*.zip
-*.txt
-*.pyc
+.rar
+.zip
+.txt
+.pyc
