@@ -14,6 +14,9 @@ import os
 import os.path as pt 
 import time 
 import socket
+import re 
+import ast
+
 from random import choice , randint
 
 # pip modules
@@ -118,14 +121,39 @@ def wait_for_connection(socket_in, verbose):
     return socket_in            
 
 
-def create_connection(your_group, other_group=0, other_IP='127.0.0.1', verbose=False):
+def set_IP(other_group):
+    """Ask for the IP of the other computer
+    
+    Show your IP and ask for the IP of the remote
+    
+    Parameters:
+    -----------
+        other_group (int): n° of the group to remote
+    Returns:
+    --------
+        other_IP (str): IP of the other computer 
+        
+    """
+    my_IP = socket.gethostbyname_ex(socket.gethostname())[-1][0]
+    print(f"Your IP is : {my_IP}")
+    other_IP = ''
+    while other_IP == '':
+        other_IP = input('Enter other_IP : ')
+        if other_IP == '':
+            other_IP = '127.0.0.1'
+        elif not re.search(r"[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}", other_IP):
+            other_IP = ''
+            
+    return other_IP     
+
+
+def create_connection(your_group, other_group=0, verbose=True):
     """Creates a connection with a referee or another group.
     
     Parameters
     ----------
     your_group: id of your group (int)
     other_group: id of the other group, if there is no referee (int, optional)
-    other_IP: IP address where the referee or the other group is (str, optional)
     verbose: True only if connection progress must be displayed (bool, optional)
     
     Return
@@ -148,7 +176,8 @@ def create_connection(your_group, other_group=0, other_IP='127.0.0.1', verbose=F
     The returned connection can be used directly with other functions in this module.
             
     """
-    
+    other_IP = set_IP(other_group)
+
     # init verbose display
     if verbose:
         print('\n[--- starts connection -----------------------------------------------------\n')
@@ -187,7 +216,7 @@ def create_connection(your_group, other_group=0, other_IP='127.0.0.1', verbose=F
     return connection
         
         
-def bind_referee(group_1, group_2, verbose=False):
+def bind_referee(group_1, group_2, verbose=True):
     """Put a referee between two groups.
     
     Parameters
@@ -212,6 +241,8 @@ def bind_referee(group_1, group_2, verbose=False):
     with other functions in this module.  connection of first (second) player has key 1 (2).
             
     """
+    my_IP = socket.gethostbyname_ex(socket.gethostname())[-1][0]
+    print(f"Your IP is : {my_IP}")
     
     # init verbose display
     if verbose:
@@ -319,7 +350,7 @@ def get_remote_orders(connection):
     if orders == 'null':
         orders = ''
         
-    return orders 
+    return orders
 
 
 # -- Anonimous Fonction of data_manager -- 
@@ -526,7 +557,7 @@ def attack(attack_coord : tuple, target_coord : tuple, db : dict , copy : dict) 
         implementation: Yannis Van Achter (v.1 11/02/2022)
     """
     if target_coord in db['wolves'] and attack_coord in db['wolves']:
-        copy['wolves'][target_coord]['energy'] -= int((db['wolves'][attack_coord]['energy'] + db['wolves'][attack_coord]['bonus'])/10)
+        copy['wolves'][target_coord]['energy'] -= round((db['wolves'][attack_coord]['energy'] + db['wolves'][attack_coord]['bonus'])/10)
     
     return copy
 
@@ -736,6 +767,28 @@ def get_entity_around(wolve_coord : tuple[int,int] , db : dict) -> (tuple[int, i
             return entity_coord
 
 # -- Fonctions of game --
+def check_order(order: str) -> (bool):
+    """Check if the order is a corrected formated 
+
+    used regex expression to check is this order is corrected format
+
+    Parameters:
+    -----------
+        order (str): one order 
+
+    Returns:
+    --------
+        bool: True if this is corrected format
+    
+    """
+    try:
+        order = order.split(':')
+        return (re.search(r"([@]{1}[1-60]{1}[\-]{1}[1-40]{1})|([\<]{1}[1-60]{1}[\-]{1}[1-40]{1})|pacify", order[1]) != None  or (re.search("[1-60]{1}[\-]{1}[1-40]{1}", order[1]) != None and order[1].startswith('*'))) and \
+            ((re.search(r"([1-60]{1}[\-]{1}[1-40]{1})", order[0])) != None)
+    except:
+        return False
+
+
 def get_instructions(player : str, db : dict, n_player : int) -> (str):
     """ask for intruction to player
 
@@ -747,14 +800,13 @@ def get_instructions(player : str, db : dict, n_player : int) -> (str):
 
     Return:
     --------
-        order (list[str]): list of all intruction
+        order (str): list of all intruction
         
     Version:
     --------
         specification: Yannis Van Achter (v2 27/02/2022)
         implementation: Yannis Van Achter (v2 03/03/2022)
     """
-    import re
     string_order = ''
     order_entered = True
     my_wolves = [wolve for wolve, data in db['wolves'].items() if data['property'] == n_player] # get wolve of my team to ask for order
@@ -763,13 +815,9 @@ def get_instructions(player : str, db : dict, n_player : int) -> (str):
         my_wolves_copy = my_wolves.copy()
         for wolve_coord in my_wolves_copy:
             order = input(f'The player named : {player}, can enter his order for the wolve at \"{wolve_coord[0]}-{wolve_coord[1]}:').strip()
-            if re.search(r"([@]{1}[1-60]{1}[\-]{1}[1-40]{1})|([\<]{1}[1-60]{1}[\-]{1}[1-40]{1})|pacify", order) != None:
+            if check_order(f"{wolve_coord[0]}-{wolve_coord[1]}:" + order):
                 string_order += f"{wolve_coord[0]}-{wolve_coord[1]}:" + order + ' '
                 my_wolves.remove(wolve_coord)
-            else:
-                if re.search("[1-60]{1}[\-]{1}[1-40]{1}", order) != None and order.startswith('*'):
-                    string_order += f"{wolve_coord[0]}-{wolve_coord[1]}:" + order + ' '
-                    my_wolves.remove(wolve_coord)
         
         # check that at least one order were entered
         if len(my_wolves) == len(my_wolves_copy):
@@ -805,63 +853,70 @@ def play_game(map_path : str, group_1 : str, type_1 : str, group_2 : str, type_2
         implementation: Yannis Van Achter (v.2 13/02/2022)
     """
     if not pt.isfile(map_path):
-        print('Raise Value error : enter another map_path')
+        print(f"ValueError: this path does not exist or is not a file {map_path}")
         return None
     
     # create connection between 2 computer if nessesary
+    connection = {}
     if type_1 == 'remote':
         try:
-            connection_1 = create_connection(group_2, group_1)
-        except (IOError, TypeError, NameError, ValueError, EOFError) as error:
+            connection[1] = create_connection(group_2, group_1)
+        except Exception as error:
             exit(error)
     if type_2 == 'remote':
         try:
-            connection_2 = create_connection(group_1, group_2)
-        except (IOError, TypeError, NameError, ValueError, EOFError) as error:
+            connection[2] = create_connection(group_1, group_2)
+        except Exception as error:
             exit(error)
         
-    db = data_create(map_path , group_1 , group_2)
+    db: dict = data_create(map_path , group_1 , group_2)
     
     order = {}
     winner = []
     game_round = 0
     while len(winner) == 0 and game_round < 200:
         show_map(db)
-        
         if type_1 == 'remote':
-            order[1] = get_remote_orders(connection_1)
+            order[1] = get_remote_orders(connection[1])
         elif type_1 == 'player':
             order[1] = get_instructions(group_1, db, 1)
         elif type_1 == 'IA':
             order[1] = get_IA_order(db , 1)
         if type_2 == 'remote':
-            notify_remote_orders(connection_2, order[1])
+            notify_remote_orders(connection[2], order[1])
         order[1] = order[1].split(' ')
         
         if type_2 == 'remote':
-            order[2] = get_remote_orders(connection_2)
+            order[2] = get_remote_orders(connection[2])
         elif type_2 == 'player':
             order[2] = get_instructions(group_2, db, 2)
         elif type_2 == 'IA':
             order[2] = get_IA_order(db , 2)
         if type_1 == 'remote':
-            notify_remote_orders(connection_1, order[2])
+            notify_remote_orders(connection[1], order[2])
         time.sleep(0.3)
         order[2] = order[2].split(' ')
         
-        db = order_prosses(db, order)
-        game_round +=1
+        time.sleep(0.5)
+
+        db, attacked = order_prosses(db, order)
+        
+        if attacked: # if any wolve attack an other the game end after 200 turn
+            game_round +=1
+        else:
+            game_round = 0
+        
         winner = game_over(db)
     
     show_map(db)
     
     if game_round < 200:
         if len(winner) == 2:
-            print(f'Both of you won in {game_round} game round')
+            print(f'Both of you won')
         elif winner[0] == 2:
-            print(f'The winner is : {group_2} in {game_round} game round')
+            print(f'The winner is : {group_2}')
         elif winner[0] == 1:
-            print(f'The winner is : {group_1} in {game_round} game round')
+            print(f'The winner is : {group_1}')
     else:
         total = {1 : 0, 2:0}
         for wolve, data in db['wolves'].items():
@@ -871,17 +926,17 @@ def play_game(map_path : str, group_1 : str, type_1 : str, group_2 : str, type_2
             print(f'Both of you won with security you have the same energy score : {total[1]}')
             winner = [1,2]
         elif total[1] > total[2]:
-            print(f'The winner is : {group_1} in {game_round} game round')
+            print(f'The winner is : {group_1}')
             winner = [1]
         elif total[1] < total[2]:
-            print(f'The winner is : {group_2} in {game_round} game round')
+            print(f'The winner is : {group_2}')
             winner = [2]
       
     # close connection, if necessary
     if type_1 == 'remote':
-        close_connection(connection_1)
+        close_connection(connection[1])
     if type_2 == 'remote':
-        close_connection(connection_2)    
+        close_connection(connection[2])    
     
     return winner
 
@@ -892,11 +947,12 @@ def order_prosses(db : dict , orders : dict) -> (dict):
     Parameters:
     -----------
         db : database of game (dic)
-        orders : input of player (dict)
+        orders : print of player (dict)
     
     Return:
     -------
-        [dic]: dictionnary of all modification to do the data baser
+        [dict]: dictionnary of all modification to do the data baser
+        [bool]: True if at least one order was to attack a wolf otherwise False
         
     Version:
     --------
@@ -905,21 +961,21 @@ def order_prosses(db : dict , orders : dict) -> (dict):
     """
     used_wolves = []
     
-    db , used_wolves = pacified(db , orders = orders) # pacification 
-    # en donant le nom des parametre avec '=' et une variable je peux lui assigné n'importe quel valeur
+    db , passifier, used_wolves = pacified(db , orders=orders) # pacification 
     
-    db , used_wolves = get_eat(db , orders = orders, used_wolves=used_wolves)
+    db = get_bonus(db)
     
-    db , used_wolves = fight(db, orders , used_wolves)
+    db , used_wolves = get_eat(db, orders, used_wolves)
+    
+    db , used_wolves, attacked = fight(db, orders , used_wolves)
 
     db, used_wolves = get_move_order(db , orders , used_wolves)
     
     db = get_bonus(db , False)
     
-    db , used_wolves = pacified(db , value  =  False) # dépacification 
-    # en donant le nom des parametre avec '=' et une variable je peux lui assigné n'importe quel valeur
+    db , passifier , used_wolves = pacified(db, passifier = passifier , value  =  False) # dépacification 
     
-    return db
+    return db, attacked
 
 def get_eat(db : dict , orders : dict, used_wolves : list) -> (tuple[dict , list]):
     """anit to wolves to eat
@@ -940,7 +996,7 @@ def get_eat(db : dict , orders : dict, used_wolves : list) -> (tuple[dict , list
     """
     for players in orders:
         for order in orders[players]:
-            if order != '':
+            if len(order) >= 7:
                 order = str.split(order, ':')
                 wolve = get_entity_coord(str.strip(order[0])) 
                 if wolve in db['wolves']:
@@ -974,7 +1030,7 @@ def get_move_order(db : dict , orders : dict, used_wolves : list) -> (tuple[dict
     """
     for player in orders:
         for order in orders[player]:
-            if order != '':
+            if len(order) >= 7:
                 order = str.split(order, ':')
                 wolve = get_entity_coord(str.strip(order[0])) 
                 if wolve in db['wolves'] and str.startswith(order[1], '@') and wolve not in used_wolves \
@@ -983,7 +1039,7 @@ def get_move_order(db : dict , orders : dict, used_wolves : list) -> (tuple[dict
                     if can_move(new_coord , wolve , db):
                         db = move_entity(wolve, new_coord, db)
                         used_wolves.append(wolve)
-                    
+    
     return db , used_wolves
 
 def fight(db : dict , orders : dict, used_wolves : list) -> (tuple[dict , list]):
@@ -1005,23 +1061,25 @@ def fight(db : dict , orders : dict, used_wolves : list) -> (tuple[dict , list])
         specification : Yannis Van Achter (v1. 27/02/2022)
         implementation : Yannis Van Achter (v1. 24/02/2022)
     """
-    copy = db.copy()
+    attacked = False
     for player in orders:
         for order in orders[player]:
-            if order != '':
+            if len(order) >= 7:
                 order = str.split(order, ':')
                 wolve = get_entity_coord(str.strip(order[0])) 
                 if wolve in db['wolves'] and str.startswith(order[1], '*') and (wolve not in used_wolves) \
                     and db['wolves'][wolve]['property'] == player:
                     target_coord = get_entity_coord(str.strip(order[1][1:])) # saut de 1 pour aller direct après le '*'
                     if can_attack(target_coord , wolve , db):
-                        copy = attack(wolve , target_coord, db, copy)
-                        if copy['wolves'][target_coord]['energy'] < 0:
-                            copy['wolves'][target_coord]['energy'] = 0
+                        db = attack(wolve , target_coord, db)
+                        if db['wolves'][target_coord]['energy'] < 0:
+                            db['wolves'][target_coord]['energy'] = 0
                         used_wolves.append(wolve)
-    return copy, used_wolves
+                        attacked = True
+                    
+    return db, used_wolves, attacked
 
-def pacified(db : dict , value : bool = True , orders : dict = {}) -> (tuple[dict, list, list]):
+def pacified(db : dict , passifier : list = [], value : bool = True , orders : dict = {}) -> (tuple[dict, list, list]):
     """pacify or unpacify wolve of game
     
     Parameters:
@@ -1033,7 +1091,7 @@ def pacified(db : dict , value : bool = True , orders : dict = {}) -> (tuple[dic
     
     Returns:
     --------
-        db: data base of game (dic)
+        db: data base of game (dict)
         passifier: list of passified wolves (list)
         
     Version:
@@ -1045,10 +1103,10 @@ def pacified(db : dict , value : bool = True , orders : dict = {}) -> (tuple[dic
     if value: 
         for player in orders:
             for order in orders[player]:
-                if order != '':
-                    order = str.split(order, ':')
-                    wolve = get_entity_coord(order[0])
+                if len(order) >= 7:
+                    order = order.split(':')
                     if str.startswith(order[1], 'pacify'):
+                        wolve = get_entity_coord(str.strip(order[0]))
                         if wolve in db['wolves'] and db['wolves'][wolve]['type'] == 'omega':
                             if db['wolves'][wolve]['energy'] >= 40 and  db['wolves'][wolve]['property'] == player:
                                 db['wolves'][wolve]['energy'] -= 40
@@ -1057,12 +1115,14 @@ def pacified(db : dict , value : bool = True , orders : dict = {}) -> (tuple[dic
                                     for x in range(wolve[1]-6, wolve[1]+7):
                                         if (y,x) in db['wolves']:
                                             db['wolves'][(y,x)]['passified'] = value
+                                            passifier.append((y,x))
 
     else:
         for wolve in db['wolves']:
             db['wolves'][wolve]['passified'] = value
+        passifier = []
     
-    return db , used_wolves
+    return db , passifier , used_wolves
 
 def get_bonus(db : dict , bonus : bool = True) -> (dict):
     """assin or not the bonus to wolves
@@ -1083,11 +1143,16 @@ def get_bonus(db : dict , bonus : bool = True) -> (dict):
     """
     if bonus:
         for wolve, data in db['wolves'].items():
-            for y in range(wolve[0] - 2 , wolve[0] +3):
-                for x in range(wolve[1] - 2 , wolve[1] +3):
-                    if (y,x) in db['wolves']:
-                        if (db['wolves'][(y,x)]['property'] == data['property']) and ((y,x) != wolve):
-                            data['bonus'] += 30 if db['wolves'][(y,x)]['type'] == 'alpha'and wolve != (y,x) else 10
+            if data['type'] == 'alpha':
+                for y in range(wolve[0] - 4 , wolve[0] +5):
+                    for x in range(wolve[1] - 4 , wolve[1] +5):
+                        if (y,x) in db['wolves'] and (db['wolves'][(y,x)]['property'] == data['property']) and ((y,x) != wolve):
+                            data['bonus'] += 30 if db['wolves'][(y,x)]['type'] == 'alpha' else 10
+            else:
+                for y in range(wolve[0] - 2 , wolve[0] +3):
+                    for x in range(wolve[1] - 2 , wolve[1] +3):
+                        if (y,x) in db['wolves'] and (db['wolves'][(y,x)]['property'] == data['property']) and ((y,x) != wolve):
+                            data['bonus'] += 30 if db['wolves'][(y,x)]['type'] == 'alpha' else 10
     else:
         for wolve,data in db['wolves'].items():
             data['bonus'] = 0
@@ -1142,19 +1207,20 @@ def game_over(db : dict) -> (list[int]):
     
     for wolve, data in db['wolves'].items():
         if data['type'] == 'alpha' and data['energy'] <=0:
-            winner.append(delta[data['property']])
+                winner.append(delta[data['property']])
     
     return winner
 
-# -- code to manage winner history and menu of game --
-def add_winner(winner: (str or int), all_winner: dict) -> (dict):
+
+# -- code to manage winner history and user in general those function are not directly linked to game--
+def add_winner(winner: str, all_winner: dict) -> (dict):
     """add winner in history
 
     add winner in history of winner based on username 
 
     Parameters:
     ----------
-        winner (str | int): username of winner
+        winner (str): username of winner
 
     Returns:
     --------
@@ -1180,7 +1246,7 @@ def get_int(*prompt : list[str,int,float]) -> (int):
         prompt (str): request
 
     Returns:
-        _type_: _description_
+        int: number inputed by user
     """
     prompt = ''.join(map(str, prompt))
     while True:
@@ -1191,6 +1257,25 @@ def get_int(*prompt : list[str,int,float]) -> (int):
             print(error)
         except:
             pass
+
+def get_type(*prompt: list):
+    """get type of one of the user
+
+    ask to a user which type he is 'player', 'IA' or 'remote'
+    
+    Parameters:
+    -----------
+        *prompt (list): list of ellement to print
+
+    Returns:
+    --------
+        str: type choosed by user
+    """
+    prompt = ''.join(map(str, prompt))
+    type='AA'
+    while type not in ('player', 'IA', 'remote'):
+        type = input(prompt)
+    return type
         
 
 def launch_game() -> (None):
@@ -1201,53 +1286,46 @@ def launch_game() -> (None):
     call this function after importing the module
     """
     from random import choice
-    import os, ast
+    
     clear()
+    
     type_player = ('player', 'IA', 'remote')
-    try:
+
+    # load history of winner
+    if pt.isfile('./winner_history.txt'):
         file = load_file('./winner_history.txt')
         all_winner = ast.literal_eval(file)
-    except:
+    else:
         all_winner = {}
     
-    run = input('Start a game ? (y/n) : ').lower()
-    while run.startswith('y'):
-        map_path = './map/' + choice(os.listdir('./map')) if input('Do you want a random map ? (y/n) : ').lower().startswith('y') else input('Enter the map path \n here: ')
-        group_1: int =  get_int('Enter the id of the player : ')
-        type_1: str =  input(f"Who play this game {type_player}: ")
-        group_2: int = get_int('Enter the id of the player : ')
-        type_2: str = input(f"Who play this game {type_player}: ")
-        if type_1 in type_player and type_2 in type_player:
-            try:
-                winner = play_game(map_path, group_1, type_1, group_2, type_2)
-            except KeyboardInterrupt as error:
-                print(error)
-                print('game restart...', end='')
-                for i in range(10):
-                    print('.',end='')
-                    time.sleep(0.5)
-                clear()
-                launch_game()
-                break
-            except SystemExit as e:
-                print(e)
-                continue
-            except:
-                continue
-            
-            # add winner to history
-            if len(winner)==2:
-                all_winner = add_winner(group_1, all_winner)
-                all_winner = add_winner(group_2, all_winner)
-            elif winner[0]==1:
-                all_winner = add_winner(group_1, all_winner)
-            elif winner[0]==2:
-                all_winner = add_winner(group_2, all_winner)
-                
-            run = input('New game ? (y/n) : ').lower() # look if we do a new game
-        else:
-            print(f'You entered a wrong type, please try again.')
+    conti = input('Start a game ? (yes/no) : ').lower()
+    while conti.startswith('y'):
+        map_path: str = './map/' + choice(os.listdir('./map')) if input('Do you want a random map ? (yes/no) : ').lower().startswith('y') else input('Enter the map path \n here: ')
+        type_1: str =  get_type(f"Who play this game as player 1 {type_player}: ")
+        type_2: str = get_type(f"Who play this game as player 2 {type_player}: ")
+        group_1: int =  get_int('Enter the id of the player : ') if type_1 == 'remote' or type_2 == 'remote' else input('Enter your user name : ')
+        group_2: int = get_int('Enter the id of the player : ') if type_2 == 'remote' or type_1 == 'remote' else input('Enter your user name : ')
+ 
+        try:
+            winner = play_game(map_path, group_1, type_1, group_2, type_2)
+        except KeyboardInterrupt as error:
+            print(error)
+            launch_game()
+            break
+        except SystemExit as e:
+            print(e)
             continue
+        
+        # add winner to history
+        if len(winner)==2:
+            all_winner = add_winner(group_1, all_winner)
+            all_winner = add_winner(group_2, all_winner)
+        elif winner[0]==1:
+            all_winner = add_winner(group_1, all_winner)
+        elif winner[0]==2:
+            all_winner = add_winner(group_2, all_winner)
+            
+        conti = input('Start a game ? (yes/no) : ').lower() # look if we do a new game
     
     # store winner history in file
     fh = open('./winner_history.txt', 'w')
