@@ -1,19 +1,75 @@
-"""
-Remote module for Python 3.9.For INFOB132 course at UNamur
+"""Module providing remote play features for UNamur programmation project (INFOB132).
 
-In this course the learner have to create a game with which they can play remotely from the pool at faculty
-"""
-__author__  = ["Benoit Frenay <benoit.frenay@unamur.be> <https://directory.unamur.be/staff/bfrenay>",
-               "Yannis Van Achter <yannis.van.achter@gmail.com>",
-]
-__date__    = "28 april 2022"
-__version__ = "1.2.0"
+Sockets are used to transmit orders on local or remote machines.
+Firewalls or restrictive networks settings may block them.  
 
+More details on sockets: https://docs.python.org/2/library/socket.html.
+
+"""
+
+__author__ = ["Benoit Frenay <benoit.frenay@unamur.be>, <https://directory.unamur.be/staff/bfrenay>", ]
+__date__   = "09 may 2022"
+__version__= "Unknow"
+
+
+# === Modules ===
+import platform
+import os
 import socket
+import struct
 import time
 import re
 
 
+# === Function === 
+# Y. V.A. code (student)
+def set_IP(other_group):
+    """Ask for the IP of the other computer
+    
+    Show your IP and ask for the IP of the remote
+    
+    Parameters:
+    -----------
+        other_group (int): n° of the group to remote
+        
+    Returns:
+    --------
+        other_IP (str): IP of the other computer 
+        
+    Notes:
+    ------
+        If an EOFError is detected use exit function and lift an SystemExit
+        
+    """
+    my_IP = socket.gethostbyname_ex(socket.gethostname())[-1][0]
+    print(f"Your IP is : {my_IP}")
+    other_IP = ''
+    while other_IP == '':
+        try:
+            other_IP = input('Enter the IP of the group {other_group} if this is not the arbitrator of the tournaments : ')
+            if other_IP == '':
+                other_IP = '127.0.0.1'
+            elif not re.search(r"[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}", other_IP):
+                # if the input is not an IP format
+                print('Check the format of the IP inputed')
+                other_IP = ''
+        except (EOFError) as e:
+            print(f"EOFError : The input for ask the IP of the other group has faill please try again. \n \nRestart the program")
+            exit(e)
+    
+    return other_IP
+
+def clear():
+    """Clear terminal 
+    
+    """
+    command = 'clear'
+    if (platform.platform()).lower().startswith('windows'):
+        command = 'cls'
+    os.system(command)
+
+
+# B. Frenay code (professor)
 def create_server_socket(local_port, verbose):
     """Creates a server socket.
     
@@ -22,8 +78,8 @@ def create_server_socket(local_port, verbose):
     local_port: port to listen to (int)
     verbose: True if verbose (bool)
     
-    Return
-    ------
+    Returns
+    -------
     socket_in: server socket (socket.socket)
     
     """
@@ -55,8 +111,8 @@ def create_client_socket(remote_IP, remote_port, verbose):
     remote_port: port to send to (int)
     verbose: True if verbose (bool)
     
-    Return
-    ------
+    Returns
+    -------
     socket_out: client socket (socket.socket)
     
     """
@@ -95,8 +151,8 @@ def wait_for_connection(socket_in, verbose):
     socket_in: server socket (socket.socket)
     verbose: True if verbose (bool)
     
-    Return
-    ------
+    Returns
+    -------
     socket_in: accepted connection (socket.socket)
     
     """
@@ -112,36 +168,6 @@ def wait_for_connection(socket_in, verbose):
     return socket_in            
 
 
-def set_IP(other_group):
-    """Ask for the IP of the other computer
-    
-    Show your IP and ask for the IP of the remote
-    
-    Parameters:
-    -----------
-        other_group (int): n° of the group to remote
-        
-    Returns:
-    --------
-        other_IP (str): IP of the other computer 
-        
-    """
-    my_IP = socket.gethostbyname_ex(socket.gethostname())[-1][0]
-    print(f"Your IP is : {my_IP}")
-    other_IP = ''
-    while other_IP == '':
-        try:
-            other_IP = input('Enter the IP of the group {other_group} if this is not the arbitrator of the tournaments : ')
-            if other_IP == '':
-                other_IP = '127.0.0.1'
-            elif not re.search(r"[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}", other_IP):
-                other_IP = ''
-        except (EOFError) as e:
-            exit(f"EOFError : The input for ask the IP of the other group has faill please try again. \n \nRestart the program")
-    
-    return other_IP
-
-
 def create_connection(your_group, other_group=0, verbose=True):
     """Creates a connection with a referee or another group.
     
@@ -149,18 +175,19 @@ def create_connection(your_group, other_group=0, verbose=True):
     ----------
     your_group: id of your group (int)
     other_group: id of the other group, if there is no referee (int, optional)
+    other_IP: IP address where the referee or the other group is (str, optional)
     verbose: True only if connection progress must be displayed (bool, optional)
     
-    Return
-    ------
+    Returns
+    -------
     connection: socket(s) to receive/send orders (dict of socket.socket)
     
-    Raise
-    -----
+    Raises
+    ------
     IOError: if your group fails to create a connection
     
-    Note
-    ----
+    Notes
+    -----
     Creating a connection can take a few seconds (it must be initialised on both sides).
     
     If there is a referee, leave other_group=0, otherwise other_IP is the id of the other group.
@@ -172,7 +199,7 @@ def create_connection(your_group, other_group=0, verbose=True):
             
     """
     other_IP = set_IP(other_group)
-
+    
     # init verbose display
     if verbose:
         print('\n[--- starts connection -----------------------------------------------------\n')
@@ -207,6 +234,8 @@ def create_connection(your_group, other_group=0, verbose=True):
     # end verbose display
     if verbose:
         print('----------------------------------------------------- connection started ---]\n')
+        
+    clear()
 
     return connection
         
@@ -220,16 +249,16 @@ def bind_referee(group_1, group_2, verbose=True):
     group_2: id of the second group (int)
     verbose: True only if connection progress must be displayed (bool, optional)
     
-    Return
-    ------
+    Returns
+    -------
     connections: sockets to receive/send orders from both players (dict)
     
-    Raise
-    -----
+    Raises
+    ------
     IOError: if the referee fails to create a connection
     
-    Note
-    ----
+    Notes
+    -----
     Putting the referee in place can take a few seconds (it must be connect to both groups).
         
     connections contains two connections (dict of socket.socket) which can be used directly
@@ -274,8 +303,8 @@ def bind_referee(group_1, group_2, verbose=True):
 def close_connection(connection):
     """Closes a connection with a referee or another group.
     
-    Parameter
-    ---------
+    Parameters
+    ----------
     connection: socket(s) to receive/send orders (dict of socket.socket)
     
     """
@@ -301,8 +330,8 @@ def notify_remote_orders(connection, orders):
     connection: sockets to receive/send orders (dict of socket.socket)
     orders: orders to notify (str)
         
-    Raise
-    -----
+    Raises
+    ------
     IOError: if remote player cannot be reached
     
     """
@@ -313,7 +342,8 @@ def notify_remote_orders(connection, orders):
     
     # send orders
     try:
-        connection['out'].sendall(orders.encode())
+        tosend = struct.pack(f"!h{len(orders)}s", len(orders), orders.encode())
+        connection['out'].sendall(tosend)
     except:
         raise IOError('remote player cannot be reached')
 
@@ -321,23 +351,24 @@ def notify_remote_orders(connection, orders):
 def get_remote_orders(connection):
     """Returns orders from a remote player.
 
-    Parameter
-    ---------
+    Parameters
+    ----------
     connection: sockets to receive/send orders (dict of socket.socket)
         
-    Return
-    ------
+    Returns
+    ----------
     player_orders: orders given by remote player (str)
 
-    Raise
-    -----
+    Raises
+    ------
     IOError: if remote player cannot be reached
             
     """
    
     # receive orders    
     try:
-        orders = connection['in'].recv(65536).decode()
+        toreceive = struct.unpack("!h", connection['in'].recv(2))[0]
+        orders = connection['in'].recv(toreceive).decode()
     except:
         raise IOError('remote player cannot be reached')
         
