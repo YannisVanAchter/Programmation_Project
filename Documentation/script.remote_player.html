@@ -1,17 +1,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: module script.remote_player</title>
+<html><head><title>Python: module remote_player</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head><body bgcolor="#f0f0f8">
 
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="script.html"><font color="#ffffff">script</font></a>.remote_player</strong></big></big> (version Unknow, Unknow)</font></td
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>remote_player</strong></big></big> (version Unknow, 09 may 2022)</font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cyanni%5Conedrive%5Cdocuments%5Cunif%5Cbac%201%5Cquadri%202%5Cinformatique%5Cprojet%20de%20programmation%5Cscript%5Cremote_player.py">c:\users\yanni\onedrive\documents\unif\bac 1\quadri 2\informatique\projet de programmation\script\remote_player.py</a></font></td></tr></table>
-    <p><tt>Remote&nbsp;module&nbsp;for&nbsp;Python&nbsp;3.9.For&nbsp;INFOB132&nbsp;course&nbsp;at&nbsp;UNamur<br>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cyanni%5Conedrive%5Cdocuments%5Cunif%5Cbac%201%5Cquadri%202%5Cinformatique%5Cprogrammation_project%5Cscript%5Cremote_player.py">c:\users\yanni\onedrive\documents\unif\bac 1\quadri 2\informatique\programmation_project\script\remote_player.py</a></font></td></tr></table>
+    <p><tt>Module&nbsp;providing&nbsp;remote&nbsp;play&nbsp;features&nbsp;for&nbsp;UNamur&nbsp;programmation&nbsp;project&nbsp;(INFOB132).<br>
 &nbsp;<br>
-In&nbsp;this&nbsp;course&nbsp;the&nbsp;learner&nbsp;have&nbsp;to&nbsp;create&nbsp;a&nbsp;game&nbsp;with&nbsp;which&nbsp;they&nbsp;can&nbsp;play&nbsp;remotely&nbsp;from&nbsp;the&nbsp;pool&nbsp;at&nbsp;faculty</tt></p>
+Sockets&nbsp;are&nbsp;used&nbsp;to&nbsp;transmit&nbsp;orders&nbsp;on&nbsp;local&nbsp;or&nbsp;remote&nbsp;machines.<br>
+Firewalls&nbsp;or&nbsp;restrictive&nbsp;networks&nbsp;settings&nbsp;may&nbsp;block&nbsp;them.&nbsp;&nbsp;<br>
+&nbsp;<br>
+More&nbsp;details&nbsp;on&nbsp;sockets:&nbsp;<a href="https://docs.python.org/2/library/socket.html">https://docs.python.org/2/library/socket.html</a>.</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#aa55cc">
@@ -19,16 +22,20 @@ In&nbsp;this&nbsp;course&nbsp;the&nbsp;learner&nbsp;have&nbsp;to&nbsp;create&nbs
 <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="socket.html">socket</a><br>
-</td><td width="25%" valign=top><a href="time.html">time</a><br>
-</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="os.html">os</a><br>
+<a href="platform.html">platform</a><br>
+</td><td width="25%" valign=top><a href="re.html">re</a><br>
+<a href="socket.html">socket</a><br>
+</td><td width="25%" valign=top><a href="struct.html">struct</a><br>
+<a href="time.html">time</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-bind_referee"><strong>bind_referee</strong></a>(group_1, group_2, verbose=False)</dt><dd><tt>Put&nbsp;a&nbsp;referee&nbsp;between&nbsp;two&nbsp;groups.<br>
+<td width="100%"><dl><dt><a name="-bind_referee"><strong>bind_referee</strong></a>(group_1, group_2, verbose=True)</dt><dd><tt>Put&nbsp;a&nbsp;referee&nbsp;between&nbsp;two&nbsp;groups.<br>
 &nbsp;<br>
 Parameters<br>
 ----------<br>
@@ -36,24 +43,25 @@ group_1:&nbsp;id&nbsp;of&nbsp;the&nbsp;first&nbsp;group&nbsp;(int)<br>
 group_2:&nbsp;id&nbsp;of&nbsp;the&nbsp;second&nbsp;group&nbsp;(int)<br>
 verbose:&nbsp;True&nbsp;only&nbsp;if&nbsp;connection&nbsp;progress&nbsp;must&nbsp;be&nbsp;displayed&nbsp;(bool,&nbsp;optional)<br>
 &nbsp;<br>
-Return<br>
-------<br>
+Returns<br>
+-------<br>
 connections:&nbsp;sockets&nbsp;to&nbsp;receive/send&nbsp;orders&nbsp;from&nbsp;both&nbsp;players&nbsp;(dict)<br>
 &nbsp;<br>
-Raise<br>
------<br>
+Raises<br>
+------<br>
 IOError:&nbsp;if&nbsp;the&nbsp;referee&nbsp;fails&nbsp;to&nbsp;create&nbsp;a&nbsp;connection<br>
 &nbsp;<br>
-Note<br>
-----<br>
+Notes<br>
+-----<br>
 Putting&nbsp;the&nbsp;referee&nbsp;in&nbsp;place&nbsp;can&nbsp;take&nbsp;a&nbsp;few&nbsp;seconds&nbsp;(it&nbsp;must&nbsp;be&nbsp;connect&nbsp;to&nbsp;both&nbsp;groups).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
 connections&nbsp;contains&nbsp;two&nbsp;connections&nbsp;(dict&nbsp;of&nbsp;socket.socket)&nbsp;which&nbsp;can&nbsp;be&nbsp;used&nbsp;directly<br>
 with&nbsp;other&nbsp;functions&nbsp;in&nbsp;this&nbsp;module.&nbsp;&nbsp;connection&nbsp;of&nbsp;first&nbsp;(second)&nbsp;player&nbsp;has&nbsp;key&nbsp;1&nbsp;(2).</tt></dd></dl>
+ <dl><dt><a name="-clear"><strong>clear</strong></a>()</dt><dd><tt>Clear&nbsp;terminal</tt></dd></dl>
  <dl><dt><a name="-close_connection"><strong>close_connection</strong></a>(connection)</dt><dd><tt>Closes&nbsp;a&nbsp;connection&nbsp;with&nbsp;a&nbsp;referee&nbsp;or&nbsp;another&nbsp;group.<br>
 &nbsp;<br>
-Parameter<br>
----------<br>
+Parameters<br>
+----------<br>
 connection:&nbsp;socket(s)&nbsp;to&nbsp;receive/send&nbsp;orders&nbsp;(dict&nbsp;of&nbsp;socket.socket)</tt></dd></dl>
  <dl><dt><a name="-create_client_socket"><strong>create_client_socket</strong></a>(remote_IP, remote_port, verbose)</dt><dd><tt>Creates&nbsp;a&nbsp;client&nbsp;socket.<br>
 &nbsp;<br>
@@ -63,10 +71,10 @@ remote_IP:&nbsp;IP&nbsp;address&nbsp;to&nbsp;send&nbsp;to&nbsp;(int)<br>
 remote_port:&nbsp;port&nbsp;to&nbsp;send&nbsp;to&nbsp;(int)<br>
 verbose:&nbsp;True&nbsp;if&nbsp;verbose&nbsp;(bool)<br>
 &nbsp;<br>
-Return<br>
-------<br>
+Returns<br>
+-------<br>
 socket_out:&nbsp;client&nbsp;socket&nbsp;(socket.socket)</tt></dd></dl>
- <dl><dt><a name="-create_connection"><strong>create_connection</strong></a>(your_group, other_group=0, other_IP='127.0.0.1', verbose=False)</dt><dd><tt>Creates&nbsp;a&nbsp;connection&nbsp;with&nbsp;a&nbsp;referee&nbsp;or&nbsp;another&nbsp;group.<br>
+ <dl><dt><a name="-create_connection"><strong>create_connection</strong></a>(your_group, other_group=0, verbose=True)</dt><dd><tt>Creates&nbsp;a&nbsp;connection&nbsp;with&nbsp;a&nbsp;referee&nbsp;or&nbsp;another&nbsp;group.<br>
 &nbsp;<br>
 Parameters<br>
 ----------<br>
@@ -75,16 +83,16 @@ other_group:&nbsp;id&nbsp;of&nbsp;the&nbsp;other&nbsp;group,&nbsp;if&nbsp;there&
 other_IP:&nbsp;IP&nbsp;address&nbsp;where&nbsp;the&nbsp;referee&nbsp;or&nbsp;the&nbsp;other&nbsp;group&nbsp;is&nbsp;(str,&nbsp;optional)<br>
 verbose:&nbsp;True&nbsp;only&nbsp;if&nbsp;connection&nbsp;progress&nbsp;must&nbsp;be&nbsp;displayed&nbsp;(bool,&nbsp;optional)<br>
 &nbsp;<br>
-Return<br>
-------<br>
+Returns<br>
+-------<br>
 connection:&nbsp;socket(s)&nbsp;to&nbsp;receive/send&nbsp;orders&nbsp;(dict&nbsp;of&nbsp;socket.socket)<br>
 &nbsp;<br>
-Raise<br>
------<br>
+Raises<br>
+------<br>
 IOError:&nbsp;if&nbsp;your&nbsp;group&nbsp;fails&nbsp;to&nbsp;create&nbsp;a&nbsp;connection<br>
 &nbsp;<br>
-Note<br>
-----<br>
+Notes<br>
+-----<br>
 Creating&nbsp;a&nbsp;connection&nbsp;can&nbsp;take&nbsp;a&nbsp;few&nbsp;seconds&nbsp;(it&nbsp;must&nbsp;be&nbsp;initialised&nbsp;on&nbsp;both&nbsp;sides).<br>
 &nbsp;<br>
 If&nbsp;there&nbsp;is&nbsp;a&nbsp;referee,&nbsp;leave&nbsp;other_group=0,&nbsp;otherwise&nbsp;other_IP&nbsp;is&nbsp;the&nbsp;id&nbsp;of&nbsp;the&nbsp;other&nbsp;group.<br>
@@ -100,21 +108,21 @@ Parameters<br>
 local_port:&nbsp;port&nbsp;to&nbsp;listen&nbsp;to&nbsp;(int)<br>
 verbose:&nbsp;True&nbsp;if&nbsp;verbose&nbsp;(bool)<br>
 &nbsp;<br>
-Return<br>
-------<br>
+Returns<br>
+-------<br>
 socket_in:&nbsp;server&nbsp;socket&nbsp;(socket.socket)</tt></dd></dl>
  <dl><dt><a name="-get_remote_orders"><strong>get_remote_orders</strong></a>(connection)</dt><dd><tt>Returns&nbsp;orders&nbsp;from&nbsp;a&nbsp;remote&nbsp;player.<br>
 &nbsp;<br>
-Parameter<br>
----------<br>
+Parameters<br>
+----------<br>
 connection:&nbsp;sockets&nbsp;to&nbsp;receive/send&nbsp;orders&nbsp;(dict&nbsp;of&nbsp;socket.socket)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
-Return<br>
-------<br>
+Returns<br>
+----------<br>
 player_orders:&nbsp;orders&nbsp;given&nbsp;by&nbsp;remote&nbsp;player&nbsp;(str)<br>
 &nbsp;<br>
-Raise<br>
------<br>
+Raises<br>
+------<br>
 IOError:&nbsp;if&nbsp;remote&nbsp;player&nbsp;cannot&nbsp;be&nbsp;reached</tt></dd></dl>
  <dl><dt><a name="-notify_remote_orders"><strong>notify_remote_orders</strong></a>(connection, orders)</dt><dd><tt>Notifies&nbsp;orders&nbsp;to&nbsp;a&nbsp;remote&nbsp;player.<br>
 &nbsp;<br>
@@ -123,9 +131,24 @@ Parameters<br>
 connection:&nbsp;sockets&nbsp;to&nbsp;receive/send&nbsp;orders&nbsp;(dict&nbsp;of&nbsp;socket.socket)<br>
 orders:&nbsp;orders&nbsp;to&nbsp;notify&nbsp;(str)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
-Raise<br>
------<br>
+Raises<br>
+------<br>
 IOError:&nbsp;if&nbsp;remote&nbsp;player&nbsp;cannot&nbsp;be&nbsp;reached</tt></dd></dl>
+ <dl><dt><a name="-set_IP"><strong>set_IP</strong></a>(other_group)</dt><dd><tt>Ask&nbsp;for&nbsp;the&nbsp;IP&nbsp;of&nbsp;the&nbsp;other&nbsp;computer<br>
+&nbsp;<br>
+Show&nbsp;your&nbsp;IP&nbsp;and&nbsp;ask&nbsp;for&nbsp;the&nbsp;IP&nbsp;of&nbsp;the&nbsp;remote<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;other_group&nbsp;(int):&nbsp;n°&nbsp;of&nbsp;the&nbsp;group&nbsp;to&nbsp;remote<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Returns:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;other_IP&nbsp;(str):&nbsp;IP&nbsp;of&nbsp;the&nbsp;other&nbsp;computer&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Notes:<br>
+------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;an&nbsp;EOFError&nbsp;is&nbsp;detected&nbsp;use&nbsp;exit&nbsp;function&nbsp;and&nbsp;lift&nbsp;an&nbsp;SystemExit</tt></dd></dl>
  <dl><dt><a name="-wait_for_connection"><strong>wait_for_connection</strong></a>(socket_in, verbose)</dt><dd><tt>Waits&nbsp;for&nbsp;a&nbsp;connection&nbsp;on&nbsp;a&nbsp;server&nbsp;socket.<br>
 &nbsp;<br>
 Parameters<br>
@@ -133,8 +156,8 @@ Parameters<br>
 socket_in:&nbsp;server&nbsp;socket&nbsp;(socket.socket)<br>
 verbose:&nbsp;True&nbsp;if&nbsp;verbose&nbsp;(bool)<br>
 &nbsp;<br>
-Return<br>
-------<br>
+Returns<br>
+-------<br>
 socket_in:&nbsp;accepted&nbsp;connection&nbsp;(socket.socket)</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -143,5 +166,5 @@ socket_in:&nbsp;accepted&nbsp;connection&nbsp;(socket.socket)</tt></dd></dl>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Author</strong></big></font></td></tr>
     
 <tr><td bgcolor="#7799ee"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%">Benoit&nbsp;Frenay&nbsp;&lt;benoit.frenay@unamur.be&gt;&nbsp;&lt;<a href="https://directory.unamur.be/staff/bfrenay">https://directory.unamur.be/staff/bfrenay</a>&gt;</td></tr></table>
+<td width="100%">['Benoit&nbsp;Frenay&nbsp;&lt;benoit.frenay@unamur.be&gt;,&nbsp;&lt;<a href="https://directory.unamur.be/staff/bfrenay">https://directory.unamur.be/staff/bfrenay</a>&gt;']</td></tr></table>
 </body></html>
