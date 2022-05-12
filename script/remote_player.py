@@ -41,12 +41,10 @@ def set_IP(other_group):
         If an EOFError is detected use exit function and lift an SystemExit
         
     """
-    my_IP = socket.gethostbyname_ex(socket.gethostname())[-1][0]
-    print(f"Your IP is : {my_IP}")
     other_IP = ''
     while other_IP == '':
         try:
-            other_IP = input('Enter the IP of the group {other_group} if this is not the arbitrator of the tournaments : ')
+            other_IP = input(f'Enter the IP of the group {other_group} if this is not the arbitrator of the tournaments : ')
             if other_IP == '':
                 other_IP = '127.0.0.1'
             elif not re.search(r"[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}", other_IP):
@@ -168,7 +166,7 @@ def wait_for_connection(socket_in, verbose):
     return socket_in            
 
 
-def create_connection(your_group, other_group=0, verbose=True):
+def create_connection(your_group, other_group=0, other_IP=None, verbose=True):
     """Creates a connection with a referee or another group.
     
     Parameters
@@ -198,7 +196,8 @@ def create_connection(your_group, other_group=0, verbose=True):
     The returned connection can be used directly with other functions in this module.
             
     """
-    other_IP = set_IP(other_group)
+    if other_IP == None or type(other_IP) is not str or not re.search(r"[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}", other_IP):
+        other_IP = set_IP(other_group)
     
     # init verbose display
     if verbose:
