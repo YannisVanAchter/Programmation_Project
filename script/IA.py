@@ -9,6 +9,7 @@ __version__ = "1.2"
 # -- Modules --
 # native module
 import ast
+import pickle as pkl
 
 # self modules
 try:
@@ -54,11 +55,12 @@ def get_IA_order(db : dict , player : int, order_1 : list[str] = []) -> (str):
     fh.close()
     
     if player == 2:
+        db = eng.pacified(db, orders={1:order_1})
         db = eng.get_eat(db, {1:order_1}, [])[0]
         db = eng.fight(db, {1:order_1}, [])[0]
     
     
-    wolve_own = [_ for _ in db['wolves'] if db['wolves'][_]['property'] == player]
+    wolve_own = [_ for _ in db['wolves'] if db['wolves'][_]['property'] == player] # list of my wolves
     order_string = ''
     one_order_found = True
     while len(wolve_own) != 0 and one_order_found:
@@ -71,7 +73,7 @@ def get_IA_order(db : dict , player : int, order_1 : list[str] = []) -> (str):
                     order_string += f'{wolve_coord[0]}-{wolve_coord[1]}' + returned
                     orders[player].append((f'{wolve_coord[0]}-{wolve_coord[1]}' + returned).strip())
                     wolve_own.remove(wolve_coord)
-        
+
         db = eng.order_prosses(db , orders)
                
         if len(_copy_wolve_own_) == len(wolve_own):

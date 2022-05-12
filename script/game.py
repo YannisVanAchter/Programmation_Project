@@ -12,6 +12,8 @@ import time
 import os
 import os.path as pt
 import ast
+import re
+import socket
 
 # self modules
 try:
@@ -35,6 +37,29 @@ can_eat = lambda target_coord, wolve : (wolve[0]-1 <= target_coord[0] <= wolve[0
 can_attack = lambda  target_coord , wolve , db : can_eat(target_coord , wolve) and (not db['wolves'][wolve]['passified']) and (target_coord in db['wolves'])
 
 # -- Fonctions of game --
+def check_order(order: str) -> (bool):
+    """Check if the order is a corrected formated 
+
+    used regex expression to check is this order is corrected format
+
+    Parameters:
+    -----------
+        order (str): one order 
+
+    Returns:
+    --------
+        bool: True if this is corrected format
+    
+    """
+    try:
+        order = order.split(':')
+        return (re.search(r"([@]{1}[1-60]{1}[\-]{1}[1-40]{1})|([\<]{1}[1-60]{1}[\-]{1}[1-40]{1})|pacify", order[1]) != None \
+            or (re.search("[1-60]{1}[\-]{1}[1-40]{1}", order[1]) != None and order[1].startswith('*'))) and \
+            ((re.search(r"([1-60]{1}[\-]{1}[1-40]{1})", order[0])) != None)
+    except:
+        return False
+
+
 def get_instructions(player : str, db : dict, n_player : int) -> (str):
     """ask for intruction to player
 
@@ -53,7 +78,6 @@ def get_instructions(player : str, db : dict, n_player : int) -> (str):
         specification: Yannis Van Achter (v2 27/02/2022)
         implementation: Yannis Van Achter (v2 03/03/2022)
     """
-    import re
     string_order = ''
     order_entered = True
     my_wolves = [wolve for wolve, data in db['wolves'].items() if data['property'] == n_player] # get wolve of my team to ask for order
@@ -62,10 +86,7 @@ def get_instructions(player : str, db : dict, n_player : int) -> (str):
         my_wolves_copy = my_wolves.copy()
         for wolve_coord in my_wolves_copy:
             order = input(f'The player named : {player}, can enter his order for the wolve at \"{wolve_coord[0]}-{wolve_coord[1]}:').strip()
-            if re.search(r"([@]{1}[1-60]{1}[\-]{1}[1-40]{1})|([\<]{1}[1-60]{1}[\-]{1}[1-40]{1})|pacify", order) != None:
-                string_order += f"{wolve_coord[0]}-{wolve_coord[1]}:" + order + ' '
-                my_wolves.remove(wolve_coord)
-            elif re.search("[1-60]{1}[\-]{1}[1-40]{1}", order) != None and order.startswith('*'):
+            if check_order(f"{wolve_coord[0]}-{wolve_coord[1]}:" + order):
                 string_order += f"{wolve_coord[0]}-{wolve_coord[1]}:" + order + ' '
                 my_wolves.remove(wolve_coord)
         
@@ -102,21 +123,39 @@ def play_game(map_path : str, group_1 : str, type_1 : str, group_2 : str, type_2
         specification: Yannis Van Achter (v.1 11/02/2022)
         implementation: Yannis Van Achter (v.2 13/02/2022)
     """
+    def _get_remote_orders_(connection):
+        try:
+            return rp.get_remote_orders(connection)
+        except Exception as e:
+            exit(e)
+            
+    def _notify_remote_orders_(connection, orders):
+        try:
+            rp.notify_remote_orders(connection, orders)
+        except Exception as e:
+            exit(e)
+    
     if not pt.isfile(map_path):
         raise ValueError('Enter another map_path this one does not exist')
     
     # create connection between 2 computer if nessesary
-    if type_1 == 'remote':
+    connection = {}
+    if type_1 == 'remote' and type_2 == 'remote':
         try:
-            connection_1 = rp.create_connection(group_2, group_1)
-        except (IOError, TypeError, NameError, ValueError, 
-        EOFError, FileExistsError, FileNotFoundError) as error:
+            connection: dict = rp.bind_referee(group_1, group_2)
+        except Exception as e:
+            exit(e)
+    elif type_1 == 'remote':
+        try:
+            connection[1] = rp.create_connection(group_2, group_1)
+            connection[2] = None
+        except Exception as error:
             exit(error)
-    if type_2 == 'remote':
+    elif type_2 == 'remote':
         try:
-            connection_2 = rp.create_connection(group_1, group_2)
-        except (IOError, TypeError, NameError, ValueError, 
-        EOFError, FileExistsError, FileNotFoundError) as error:
+            connection[2] = rp.create_connection(group_1, group_2)
+            connection[0] = connection[2].copy()
+        except Exception as error:
             exit(error)
         
     db: dict = dm.data_create(map_path , group_1 , group_2)
@@ -124,43 +163,47 @@ def play_game(map_path : str, group_1 : str, type_1 : str, group_2 : str, type_2
     order = {}
     winner = []
     game_round = 0
+    ui.show_map(db)
     while len(winner) == 0 and game_round < 200:
-        ui.show_map(db)
-        
         if type_1 == 'remote':
-            order[1] = rp.get_remote_orders(connection_1)
+            order[1] = _get_remote_orders_(connection[1])
         elif type_1 == 'player':
             order[1] = get_instructions(group_1, db, 1)
         elif type_1 == 'IA':
             order[1], db = ia.get_IA_order(db , 1)
         if type_2 == 'remote':
-            rp.notify_remote_orders(connection_2, order[1])
+            _notify_remote_orders_(connection[2], order[1])
         order[1] = order[1].split(' ')
         
         if type_2 == 'remote':
-            order[2] = rp.get_remote_orders(connection_2)
+            order[2] = _get_remote_orders_(connection[2])
         elif type_2 == 'player':
             order[2] = get_instructions(group_2, db, 2)
         elif type_2 == 'IA':
             order[2], db = ia.get_IA_order(db , 2, order[1])
         if type_1 == 'remote':
-            rp.notify_remote_orders(connection_1, order[2])
+            _notify_remote_orders_(connection[1], order[2])
         time.sleep(0.3)
         order[2] = order[2].split(' ')
         
-        db = order_prosses(db, order)
-        game_round +=1
+        time.sleep(0.5)
+
+        db, attacked = order_prosses(db, order)
+        
+        if attacked: # if any wolve attack an other the game end after 200 turn
+            game_round +=1
+        else:
+            game_round = 0
+        
         winner = game_over(db)
-    
-    ui.show_map(db)
     
     if game_round < 200:
         if len(winner) == 2:
-            print(f'Both of you won in {game_round} game round')
+            print(f'Both of you won')
         elif winner[0] == 2:
-            print(f'The winner is : {group_2} in {game_round} game round')
+            print(f'The winner is : {group_2}')
         elif winner[0] == 1:
-            print(f'The winner is : {group_1} in {game_round} game round')
+            print(f'The winner is : {group_1}')
     else:
         total = {1 : 0, 2:0}
         for wolve, data in db['wolves'].items():
@@ -170,17 +213,17 @@ def play_game(map_path : str, group_1 : str, type_1 : str, group_2 : str, type_2
             print(f'Both of you won with security you have the same energy score : {total[1]}')
             winner = [1,2]
         elif total[1] > total[2]:
-            print(f'The winner is : {group_1} in {game_round} game round')
+            print(f'The winner is : {group_1}')
             winner = [1]
         elif total[1] < total[2]:
-            print(f'The winner is : {group_2} in {game_round} game round')
+            print(f'The winner is : {group_2}')
             winner = [2]
       
     # close connection, if necessary
     if type_1 == 'remote':
-        rp.close_connection(connection_1)
+        rp.close_connection(connection[1])
     if type_2 == 'remote':
-        rp.close_connection(connection_2)    
+        rp.close_connection(connection[2])    
     
     return winner
 
@@ -210,7 +253,7 @@ def order_prosses(db : dict , orders : dict) -> (dict):
     
     db , used_wolves = get_eat(db, orders, used_wolves)
     
-    db , used_wolves = fight(db, orders , used_wolves)
+    db , used_wolves, attacked = fight(db, orders , used_wolves)
 
     db, used_wolves = get_move_order(db , orders , used_wolves)
     
@@ -218,7 +261,7 @@ def order_prosses(db : dict , orders : dict) -> (dict):
     
     db , passifier , used_wolves = pacified(db, passifier = passifier , value  =  False) # dépacification 
     
-    return db
+    return db, attacked
 
 def get_eat(db : dict , orders : dict, used_wolves : list) -> (tuple[dict , list]):
     """anit to wolves to eat
@@ -304,6 +347,7 @@ def fight(db : dict , orders : dict, used_wolves : list) -> (tuple[dict , list])
         specification : Yannis Van Achter (v1. 27/02/2022)
         implementation : Yannis Van Achter (v1. 24/02/2022)
     """
+    attacked = False
     for player in orders:
         for order in orders[player]:
             if len(order) >= 7:
@@ -317,8 +361,9 @@ def fight(db : dict , orders : dict, used_wolves : list) -> (tuple[dict , list])
                         if db['wolves'][target_coord]['energy'] < 0:
                             db['wolves'][target_coord]['energy'] = 0
                         used_wolves.append(wolve)
+                        attacked = True
                     
-    return db, used_wolves
+    return db, used_wolves, attacked
 
 def pacified(db : dict , passifier : list = [], value : bool = True , orders : dict = {}) -> (tuple[dict, list, list]):
     """pacify or unpacify wolve of game
@@ -528,28 +573,38 @@ def launch_game() -> (None):
     from random import choice
     
     ui.clear()
-    
+    import platform
     type_player = ('player', 'IA', 'remote')
-
+    separator = '\\' if platform.system().startswith('windows') else '/'
+    print(separator)
     # load history of winner
-    if pt.isfile('./winner_history.txt'):
-        file = dm.load_file('./winner_history.txt')
+    if pt.isfile('.' + separator + 'winner_history.txt'):
+        file = dm.load_file('.' + separator + 'winner_history.txt')
         all_winner = ast.literal_eval(file)
     else:
         all_winner = {}
-    
+        
     conti = input('Start a game ? (yes/no) : ').lower()
-    while conti.startswith('yes'):
-        map_path: str = './map/' + choice(os.listdir('./map')) if input('Do you want a random map ? (yes/no) : ').lower().startswith('yes') else input('Enter the map path \n here: ')
-        type_1: str =  get_type(f"Who play this game {type_player}: ")
-        group_1: int =  get_int('Enter the id of the player : ') if type_1 == 'remote' else input('Enter your user name')
-        type_2: str = get_type(f"Who play this game {type_player}: ")
-        group_2: int = get_int('Enter the id of the player : ') if type_2 == 'remote' else input('Enter your user name')
+    while conti.startswith('y'):
+        if input('Do you want a random map ? (yes/no) : ').lower().startswith('y'):
+            map_path: str = '.' + separator + 'map' + separator + choice(os.listdir('.'+ separator + 'map')) 
+        else:
+            map_path = input('Enter the map path (from root) \nhere: ')
+        
+        type_1: str =  get_type(f"Who play this game as player 1 {type_player}: ")
+        type_2: str = get_type(f"Who play this game as player 2 {type_player}: ")
+        if type_1 == 'remote' or type_2 == 'remote':
+            group_1: int = get_int('Enter the id of the player 1 : ')
+            group_2: int = get_int('Enter the id of the player 2 : ') 
+            my_IP = socket.gethostbyname_ex(socket.gethostname())[-1][0]
+            print(f"Your IP is : {my_IP}")
+        else:
+            group_1: str = input('Enter your user name : ')
+            group_2: str = input('Enter your user name : ')
  
         try:
             winner = play_game(map_path, group_1, type_1, group_2, type_2)
-        except KeyboardInterrupt as error:
-            print(error)
+        except KeyboardInterrupt:
             launch_game()
             break
         except SystemExit as e:

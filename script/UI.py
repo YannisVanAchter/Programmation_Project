@@ -6,10 +6,17 @@ __date__    = "27 February 2022"
 __version__ = "1.0"
 
 # -- Modules --
+# native modules
+import platform
+import os
+
+# pip modules
 from colored import style, fore, back
 
+# --- Anonimous function ---
 format_string = lambda string : string +fore.GOLD_1 + back.DARK_BLUE + style.RESET
 
+# --- Function ---
 def show_map(db : dict) -> (None):
     """show map in terminal
 
@@ -99,12 +106,12 @@ def find_entity(position : tuple, db : dict) -> (str):
         "RED" : back.LIGHT_RED + "  " + style.RESET,
         "BLUE" :back.LIGHT_BLUE + "  " + style.RESET,
     }
-    if 'property' not in db[position]:
+    if 'property' not in db[position]: # this is not a wolve
         try:
             return colored_wolf[db[position]['type'].upper()]
         except KeyError:
             return fore.WHITE + back.DARK_GREEN + "  " + style.RESET
-    else : 
+    else : # this is a wolve
         wolve_to_show = db[position]['type'].upper() + ('_RED' if db[position]['property'] == 2 else '_BLUE')
         try:
             return colored_wolf[wolve_to_show]
@@ -119,7 +126,6 @@ def clear() -> (None):
         Specification : Yannis Van Achter (v1 04/03/2022)
         implementation : Yannis Van Achter (v1 04/03/2022)
     """
-    import os
     command = 'clear'
     if os.name in ('nt', 'dos'):
         command = 'cls'
