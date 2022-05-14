@@ -2,8 +2,7 @@ __pycache__
 venv 
 .cpython-39.pyc
 .idea/
-.rar
-.zip
-.txt
+*.rar
+*.zip
 .pyc
 instructions/Analyse Réflective final.pdf
