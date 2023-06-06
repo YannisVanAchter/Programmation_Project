@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module script.IA</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="script.html"><font color="#ffffff">script</font></a>.IA</strong></big></big> (version 1.0, 17 February 2022)</font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cyanni%5Conedrive%5Cdocuments%5Cunif%5Cbac%201%5Cquadri%202%5Cinformatique%5Cprojet%20de%20programmation%5Cscript%5Cia.py">c:\users\yanni\onedrive\documents\unif\bac 1\quadri 2\informatique\projet de programmation\script\ia.py</a></font></td></tr></table>
+    <p><tt>IA&nbsp;module&nbsp;for&nbsp;Python&nbsp;3.9.&nbsp;Based&nbsp;on&nbsp;INFOB132&nbsp;year&nbsp;2021-2022&nbsp;request&nbsp;at&nbsp;UNamur</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="ast.html">ast</a><br>
+</td><td width="25%" valign=top><a href="script.engine_gr_3.html">script.engine_gr_3</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-find_nearrest_food"><strong>find_nearrest_food</strong></a>(wolve: tuple[int, int], db: dict, min_energy: int = 100) -&gt; list[tuple[int, int]]</dt><dd><tt>find&nbsp;and&nbsp;short&nbsp;all&nbsp;food&nbsp;source&nbsp;based&nbsp;on&nbsp;coord&nbsp;of&nbsp;wolve<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;wolve&nbsp;:&nbsp;wolve&nbsp;coord&nbsp;(tuple[int,int])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;part&nbsp;of&nbsp;data&nbsp;base&nbsp;of&nbsp;game&nbsp;which&nbsp;contain&nbsp;food&nbsp;(dict)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;min_energy&nbsp;:&nbsp;minimum&nbsp;required&nbsp;energy&nbsp;(int)<br>
+&nbsp;<br>
+Return:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;food_list&nbsp;:&nbsp;list&nbsp;of&nbsp;food&nbsp;wich&nbsp;have&nbsp;ennough&nbsp;energy&nbsp;and&nbsp;sort&nbsp;by&nbsp;distance&nbsp;(list[tuple[int,int],&nbsp;...])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification&nbsp;:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v1.&nbsp;19/03/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation&nbsp;:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v1.&nbsp;19/03/2022)</tt></dd></dl>
+ <dl><dt><a name="-get_IA_order"><strong>get_IA_order</strong></a>(db: dict, player: int, order_1: list[str] = []) -&gt; str</dt><dd><tt>return&nbsp;a&nbsp;formated&nbsp;string&nbsp;of&nbsp;order<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;(dict):&nbsp;database&nbsp;of&nbsp;Game<br>
+&nbsp;&nbsp;&nbsp;&nbsp;player&nbsp;(int):&nbsp;n°&nbsp;of&nbsp;player&nbsp;we&nbsp;are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;order_1&nbsp;(list[str]):&nbsp;list&nbsp;of&nbsp;order&nbsp;of&nbsp;the&nbsp;first&nbsp;player.&nbsp;Default&nbsp;to&nbsp;empty&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Return:<br>
+-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;order_string&nbsp;:&nbsp;string&nbsp;of&nbsp;all&nbsp;order&nbsp;for&nbsp;each&nbsp;wolve<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Notes:<br>
+------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;format&nbsp;of&nbsp;a&nbsp;order&nbsp;is&nbsp;the&nbsp;folowing&nbsp;one<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y-x:ayt-xt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y,&nbsp;x&nbsp;:&nbsp;coord&nbsp;of&nbsp;entity&nbsp;which&nbsp;recieve&nbsp;the&nbsp;order<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;is&nbsp;the&nbsp;action:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;@&nbsp;to&nbsp;move&nbsp;at&nbsp;folowing&nbsp;coordonates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;*&nbsp;to&nbsp;attack&nbsp;the&nbsp;entity&nbsp;at&nbsp;folowing&nbsp;coordonates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&lt;&nbsp;to&nbsp;eat&nbsp;at&nbsp;folowing&nbsp;coordonates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;pacify&nbsp;(only&nbsp;for&nbsp;a&nbsp;omega&nbsp;wolf&nbsp;type)&nbsp;pacify&nbsp;in&nbsp;range&nbsp;of&nbsp;6&nbsp;cases&nbsp;arround&nbsp;him<br>
+&nbsp;&nbsp;&nbsp;&nbsp;yt,&nbsp;xt&nbsp;:&nbsp;coord&nbsp;where&nbsp;the&nbsp;action&nbsp;is&nbsp;apply&nbsp;(not&nbsp;requiered&nbsp;if&nbsp;we&nbsp;pacify)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;this&nbsp;encoding&nbsp;is&nbsp;repeated&nbsp;for&nbsp;each&nbsp;wolve&nbsp;<br>
+&nbsp;<br>
+Versions:<br>
+---------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification:&nbsp;Yannis&nbsp;Van&nbsp;Achter<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation:&nbsp;Yannis&nbsp;Van&nbsp;Achter</tt></dd></dl>
+ <dl><dt><a name="-get_entity_around"><strong>get_entity_around</strong></a>(wolve_coord: tuple[int, int], db: dict) -&gt; tuple[int, int]</dt><dd><tt>return&nbsp;the&nbsp;first&nbsp;entity&nbsp;around&nbsp;a&nbsp;wolve&nbsp;in&nbsp;the&nbsp;db<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;wolve_coord&nbsp;:&nbsp;coord&nbsp;y,x&nbsp;of&nbsp;the&nbsp;entity&nbsp;on&nbsp;who&nbsp;we&nbsp;do&nbsp;research&nbsp;(list(int))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;part&nbsp;of&nbsp;database&nbsp;in&nbsp;which&nbsp;we&nbsp;do&nbsp;research&nbsp;(dict)<br>
+&nbsp;<br>
+Returns:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;target_coord&nbsp;:&nbsp;coord&nbsp;y,x&nbsp;of&nbsp;first&nbsp;entity&nbsp;found&nbsp;(list(int))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification&nbsp;:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v1.&nbsp;09/03/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation&nbsp;:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v1.&nbsp;09/03/2022)</tt></dd></dl>
+ <dl><dt><a name="-get_trajectory"><strong>get_trajectory</strong></a>(wolve_coord: tuple[int, int], target_coord: tuple[int, int]) -&gt; tuple[int, int]</dt><dd><tt>return&nbsp;the&nbsp;trajectory&nbsp;from&nbsp;wolve&nbsp;to&nbsp;a&nbsp;target<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;wolve_coord&nbsp;:&nbsp;wolve&nbsp;coord&nbsp;(tuple[int,int])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;target_coord&nbsp;:&nbsp;target&nbsp;entity&nbsp;coord&nbsp;(tuple[int,int])<br>
+&nbsp;<br>
+Returns:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;next_position&nbsp;:&nbsp;the&nbsp;next&nbsp;positon&nbsp;to&nbsp;go&nbsp;at&nbsp;the&nbsp;target&nbsp;(tuple[int,int])<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification&nbsp;:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v1.&nbsp;19/03/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation&nbsp;:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v1.&nbsp;19/03/2022)</tt></dd></dl>
+ <dl><dt><a name="-track_alpha"><strong>track_alpha</strong></a>(db, wolve_coord, player)</dt><dd><tt>get&nbsp;order&nbsp;for&nbsp;this&nbsp;wolve&nbsp;if&nbsp;we&nbsp;apply&nbsp;the&nbsp;huntinf&nbsp;of&nbsp;alpha&nbsp;strategy<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;data&nbsp;base&nbsp;of&nbsp;game&nbsp;(dict)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;wolve&nbsp;:&nbsp;name&nbsp;of&nbsp;wolve&nbsp;in&nbsp;process&nbsp;(str)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;player&nbsp;:&nbsp;number&nbsp;of&nbsp;player&nbsp;we&nbsp;are&nbsp;(int)<br>
+&nbsp;<br>
+Returns:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;order&nbsp;:&nbsp;order&nbsp;apply&nbsp;to&nbsp;this&nbsp;wolve&nbsp;(str)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification&nbsp;:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v1&nbsp;23/03/04)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation&nbsp;:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v1&nbsp;23/03/04)</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#7799ee">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Author</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#7799ee"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Yannis&nbsp;Van&nbsp;Achter&nbsp;&lt;yannis.van.achter@gmail.com&gt;</td></tr></table>
+</body></html>

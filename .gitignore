@@ -6,3 +6,6 @@ venv
 *.zip
 .pyc
 instructions/Analyse Réflective final.pdf
+
+.vscode/*
+.VSCodeCounter/*
