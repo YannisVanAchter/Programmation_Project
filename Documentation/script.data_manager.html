@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module script.data_manager</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="script.html"><font color="#ffffff">script</font></a>.data_manager</strong></big></big> (version 1.0, 27 February 2022)</font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cyanni%5Conedrive%5Cdocuments%5Cunif%5Cbac%201%5Cquadri%202%5Cinformatique%5Cprojet%20de%20programmation%5Cscript%5Cdata_manager.py">c:\users\yanni\onedrive\documents\unif\bac 1\quadri 2\informatique\projet de programmation\script\data_manager.py</a></font></td></tr></table>
+    <p><tt>data_manager&nbsp;module&nbsp;for&nbsp;Python&nbsp;3.9.&nbsp;Based&nbsp;on&nbsp;INFOB132&nbsp;year&nbsp;2021-2022&nbsp;request&nbsp;at&nbsp;UNamur</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="ntpath.html">ntpath</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-add_food"><strong>add_food</strong></a>(line: str, db: dict) -&gt; dict</dt><dd><tt>add&nbsp;wolves&nbsp;in&nbsp;there&nbsp;team&nbsp;and&nbsp;set&nbsp;spawn&nbsp;point&nbsp;and&nbsp;heath&nbsp;point<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;line&nbsp;:&nbsp;'x&nbsp;y&nbsp;type&nbsp;heathpoint'&nbsp;(str)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;data&nbsp;base&nbsp;of&nbsp;the&nbsp;game&nbsp;(dic)<br>
+&nbsp;<br>
+Return:<br>
+-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db:&nbsp;data&nbsp;base&nbsp;of&nbsp;the&nbsp;game&nbsp;upgraded&nbsp;(dic)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;07/02/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.2&nbsp;10/02/2022)</tt></dd></dl>
+ <dl><dt><a name="-add_wolves"><strong>add_wolves</strong></a>(line: str, db: dict, Player_1: str, Player_2: str) -&gt; dict</dt><dd><tt>add&nbsp;wolves&nbsp;in&nbsp;there&nbsp;team&nbsp;and&nbsp;set&nbsp;spawn&nbsp;point&nbsp;and&nbsp;heath&nbsp;point<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;line&nbsp;:&nbsp;'x&nbsp;y&nbsp;type&nbsp;heathpoint'&nbsp;(str)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;data&nbsp;base&nbsp;of&nbsp;the&nbsp;game&nbsp;(dic)<br>
+&nbsp;<br>
+Return:<br>
+-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db:&nbsp;data&nbsp;base&nbsp;of&nbsp;the&nbsp;game&nbsp;upgraded&nbsp;(dic)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;07/02/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.2&nbsp;10/02/2022)</tt></dd></dl>
+ <dl><dt><a name="-attack"><strong>attack</strong></a>(attack_coord: tuple, target_coord: tuple, db: dict) -&gt; dict</dt><dd><tt>attack&nbsp;the&nbsp;other&nbsp;wolve<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;attack_coord&nbsp;:&nbsp;(y,x)&nbsp;(tuple)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;target_coord&nbsp;:&nbsp;(y,x)&nbsp;(tuple)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;database&nbsp;of&nbsp;game&nbsp;(dict)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;copy&nbsp;:&nbsp;copy&nbsp;of&nbsp;db&nbsp;on&nbsp;wich&nbsp;order&nbsp;are&nbsp;applied&nbsp;(dict)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Return:<br>
+-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;upgrade&nbsp;database&nbsp;of&nbsp;game&nbsp;(dic)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;11/02/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;11/02/2022)</tt></dd></dl>
+ <dl><dt><a name="-create_map"><strong>create_map</strong></a>(size_str: str) -&gt; dict</dt><dd><tt>create&nbsp;a&nbsp;map<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;size_str&nbsp;:&nbsp;x&nbsp;y&nbsp;(str)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;data&nbsp;base&nbsp;of&nbsp;game&nbsp;(dic)<br>
+&nbsp;<br>
+Return:<br>
+-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;upgraded&nbsp;data&nbsp;base&nbsp;of&nbsp;game&nbsp;(dic)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.2&nbsp;10/02/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.2&nbsp;10/02/2022)</tt></dd></dl>
+ <dl><dt><a name="-data_create"><strong>data_create</strong></a>(file_path: str, Player_1: str, Player_2: str) -&gt; dict[str, dict[tuple, dict[str, int]]]</dt><dd><tt>create&nbsp;all&nbsp;data&nbsp;request&nbsp;for&nbsp;the&nbsp;game<br>
+&nbsp;<br>
+Parameter:<br>
+----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;file_path&nbsp;:&nbsp;path&nbsp;to&nbsp;file&nbsp;to&nbsp;&nbsp;create&nbsp;map(str)<br>
+&nbsp;<br>
+Return:<br>
+-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db:&nbsp;game&nbsp;database&nbsp;(dic)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;10/02/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;10/02/2022)</tt></dd></dl>
+ <dl><dt><a name="-eat"><strong>eat</strong></a>(wolve_coord: tuple, food_source: tuple, db: dict) -&gt; dict</dt><dd><tt>give&nbsp;health&nbsp;to&nbsp;wolve&nbsp;and&nbsp;substract&nbsp;heath&nbsp;to&nbsp;food<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;wolve_coord&nbsp;:&nbsp;(y,x)(tuple)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;food_source&nbsp;:&nbsp;(y,x)(tuple)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;database&nbsp;of&nbsp;game&nbsp;(dic)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Return:<br>
+-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;database&nbsp;updated&nbsp;(dic)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;11/02/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;11/02/2022)</tt></dd></dl>
+ <dl><dt><a name="-load_file"><strong>load_file</strong></a>(filename: str) -&gt; str</dt><dd><tt>load&nbsp;file&nbsp;asked<br>
+&nbsp;<br>
+Parameteres:<br>
+------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename:&nbsp;path&nbsp;of&nbsp;the&nbsp;file&nbsp;(str)<br>
+&nbsp;<br>
+Raise:<br>
+------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;FileExistsError:&nbsp;[description]<br>
+&nbsp;<br>
+Return:<br>
+-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;loaded_file:&nbsp;list&nbsp;of&nbsp;line&nbsp;from&nbsp;the&nbsp;file&nbsp;(list)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;05/02/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;05/02/2022)</tt></dd></dl>
+ <dl><dt><a name="-move_entity"><strong>move_entity</strong></a>(old_coord: tuple, new_coord: tuple, db: dict) -&gt; dict</dt><dd><tt>move&nbsp;data&nbsp;from&nbsp;old&nbsp;coordinate&nbsp;to&nbsp;new&nbsp;and&nbsp;delete&nbsp;old<br>
+&nbsp;<br>
+Parameters:<br>
+-----------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;old_coord&nbsp;:&nbsp;actual&nbsp;coordinate&nbsp;(tuple)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_coord&nbsp;:&nbsp;new&nbsp;coordonate&nbsp;(tuple)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db&nbsp;:&nbsp;data&nbsp;base&nbsp;of&nbsp;game&nbsp;(dic)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Return:<br>
+-------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db:&nbsp;database&nbsp;update&nbsp;(dic)<br>
+&nbsp;<br>
+Version:<br>
+--------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specification:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;10/02/2022)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;implementation:&nbsp;Yannis&nbsp;Van&nbsp;Achter&nbsp;(v.1&nbsp;10/02/2022)</tt></dd></dl>
+ <dl><dt><strong>set_board_value</strong> <em>lambda</em> size, min=20, max=40</dt><dd><tt>#&nbsp;--&nbsp;Anonimous&nbsp;Fonction&nbsp;--</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#7799ee">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Author</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#7799ee"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Yannis&nbsp;Van&nbsp;Achter&nbsp;&lt;yannis.van.achter@gmail.com&gt;</td></tr></table>
+</body></html>
